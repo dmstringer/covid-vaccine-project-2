@@ -2,21 +2,22 @@ require("dotenv").config();
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
-import { buildSchema } from "type-graphql";
-import resolvers from "./graphql/resolvers";
 import cors from "cors";
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
+import cron from "node-cron";
+import typeDefs from "./graphql/schemas";
+import resolvers from "./graphql/resolvers/index";
 import sequelize from "./db/sequelize";
+import { createSlots } from "./utils/createSlots";
+import { expireGuarantees } from "./utils/expireGuarantees";
 
 const startServer = async () => {
-  const schema = await buildSchema({
-    resolvers,
-  });
-
   const server = new ApolloServer({
-    schema,
-    context: ({ req, res }: any) => ({ req, res }),
+    //schema,
+    resolvers,
+    typeDefs,
+    context: ({ req, res }) => ({ req, res }),
   });
 
   await sequelize();
@@ -38,7 +39,11 @@ const startServer = async () => {
 
   const httpServer = createServer(app);
 
-  httpServer.listen({ port: process.env.PORT }, (): void =>
+  cron.schedule("* * * * *", expireGuarantees);
+  const startDate = new Date();
+  createSlots(5, startDate.setHours(8), 5);
+
+  httpServer.listen({ port: process.env.PORT }, () =>
     console.log(`Server is running on port ${process.env.PORT}/graphql`)
   );
 };
