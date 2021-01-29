@@ -1,13 +1,14 @@
-import UserResolver from "./user";
-import LocationResolver from "./location";
-import GuaranteeResolver from "./guarantee";
-import SlotResolver from "./slot";
-import WaitlistResolver from "./waitlist";
+const UserResolver = require("./user");
+const LocationResolver = require("./location");
+const GuaranteeResolver = require("./guarantee");
+const SlotResolver = require("./slot");
+const WaitlistResolver = require("./waitlist");
+const merge = require("lodash.merge");
 
-export default [
+module.exports = merge(
   UserResolver,
   LocationResolver,
   GuaranteeResolver,
   SlotResolver,
-  WaitlistResolver,
-];
+  WaitlistResolver
+);

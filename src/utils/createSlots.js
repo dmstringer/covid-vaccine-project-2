@@ -1,11 +1,11 @@
-const SlotModel = require('../db/models/slot').default;
-const LocationModel = require('../db/models/location').default;
-const moment = require('moment');
-const v4 = require('uuid').v4;
+const { Slot } = require("../db/models");
+const { Location } = require("../db/models");
+const moment = require("moment");
+const uuidv4 = require("uuid").v4;
 
 const createSlots = async (amount, startDate, runDays) => {
-  SlotModel.destroy({ truncate: true });
-  const locations = await LocationModel.findAll();
+  Slot.destroy({ truncate: true });
+  const locations = await Location.findAll();
 
   locations.forEach((location) => {
     const newSlots = [];
@@ -13,17 +13,17 @@ const createSlots = async (amount, startDate, runDays) => {
 
     for (let i = 0; i < runDays; i++) {
       for (let j = 0; j < amount; j++) {
-        const currentHour = moment(startDate).add(i, 'days').add(j, 'hours');
+        const currentHour = moment(startDate).add(i, "days").add(j, "hours");
         console.log();
         newSlots.push({
-          id: v4(),
+          id: uuidv4(),
           day: currentHour,
           locationId: location.id,
           isReserved: false,
         });
       }
     }
-    SlotModel.bulkCreate(newSlots);
+    Slot.bulkCreate(newSlots);
   });
 };
 

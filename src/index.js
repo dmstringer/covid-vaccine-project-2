@@ -1,20 +1,18 @@
 require("dotenv").config();
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
-import "reflect-metadata";
-import cors from "cors";
-import { createServer } from "http";
-import cookieParser from "cookie-parser";
-import cron from "node-cron";
-import typeDefs from "./graphql/schemas";
-import resolvers from "./graphql/resolvers/index";
-import sequelize from "./db/sequelize";
-import { createSlots } from "./utils/createSlots";
-import { expireGuarantees } from "./utils/expireGuarantees";
+const express = require("express");
+const { ApolloServer } = require("apollo-server-express");
+const cors = require("cors");
+const { createServer } = require("http");
+const cookieParser = require("cookie-parser");
+const typeDefs = require("./graphql/schemas");
+const resolvers = require("./graphql/resolvers/index");
+const sequelize = require("./db/sequelize");
+const cron = require("node-cron");
+const { createSlots } = require("./utils/createSlots");
+const { expireGuarantees } = require("./utils/expireGuarantees");
 
 const startServer = async () => {
   const server = new ApolloServer({
-    //schema,
     resolvers,
     typeDefs,
     context: ({ req, res }) => ({ req, res }),
